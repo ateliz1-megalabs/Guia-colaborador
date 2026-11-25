@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GGC · Guías de usuario</title>
+<style>
+  :root {
+    --ink: #1B2333; --muted: #5B6578; --line: #E3E7EE; --soft: #F5F7FA; --bg: #FAFBFC;
+    --brand: #1F3A5F; --brand-2: #2E5A8C; --accent: #0F7B6C; --accent-soft: #E6F4F1;
+    --warn: #A15C07; --warn-soft: #FDF3E3; --bad: #B42318; --bad-soft: #FDECEA;
+    --side: 260px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif; color: var(--ink); font-size: 14px; line-height: 1.55; margin: 0; background: var(--bg); }
+  h1, h2, h3 { margin: 0; letter-spacing: -0.01em; }
+  p { margin: 0 0 8px; }
+  strong { font-weight: 600; }
+  a { color: var(--brand-2); }
+
+  /* ---------- Estructura ---------- */
+  .topbar { height: 54px; background: var(--brand); color: #fff; display: flex; align-items: center; gap: 12px; padding: 0 20px; position: sticky; top: 0; z-index: 10; }
+  .topbar .logo { font-weight: 800; letter-spacing: .02em; font-size: 16px; }
+  .topbar .sep { opacity: .4; }
+  .topbar .title { opacity: .85; font-size: 14px; }
+  .menu-btn { display: none; background: none; border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 6px; padding: 4px 9px; font: inherit; cursor: pointer; }
+  .layout { display: grid; grid-template-columns: var(--side) 1fr; min-height: calc(100vh - 54px); }
+  nav.side { background: #fff; border-right: 1px solid var(--line); padding: 16px 10px 40px; position: sticky; top: 54px; height: calc(100vh - 54px); overflow-y: auto; }
+  nav.side .search { width: 100%; border: 1px solid var(--line); border-radius: 7px; padding: 7px 10px; font: inherit; font-size: 13px; margin-bottom: 12px; background: var(--soft); }
+  nav.side .group { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 14px 10px 6px; display: flex; align-items: center; gap: 6px; }
+  nav.side .group .dot { width: 8px; height: 8px; border-radius: 50%; }
+  nav.side a.item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; color: var(--ink); text-decoration: none; font-size: 13.5px; }
+  nav.side a.item:hover { background: var(--soft); }
+  nav.side a.item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  nav.side a.item.soon { color: #9AA3B2; }
+  nav.side a.item .badge { font-size: 10px; font-weight: 600; background: var(--soft); color: #9AA3B2; border-radius: 8px; padding: 1px 6px; white-space: nowrap; }
+  main { padding: 28px 36px 60px; max-width: 1020px; width: 100%; }
+
+  /* Modos */
+  body.embed .topbar { display: none; }
+  body.embed .layout { min-height: 100vh; }
+  body.embed nav.side { top: 0; height: 100vh; }
+  body.solo .topbar, body.solo nav.side { display: none; }
+  body.solo .layout { display: block; }
+  body.solo main { margin: 0 auto; }
+  body.print { background: #fff; }
+  body.print .topbar, body.print nav.side, body.print .guide-actions { display: none !important; }
+  body.print .layout { display: block; }
+  body.print main { padding: 0; max-width: none; }
+
+  article { display: none; }
+  article.show { display: block; }
+
+  /* ---------- Contenido de guía ---------- */
+  .hero { background: var(--brand); color: #fff; border-radius: 12px; padding: 26px 30px 22px; margin-bottom: 20px; position: relative; overflow: hidden; }
+  .hero::after { content: ""; position: absolute; right: -40px; top: -40px; width: 190px; height: 190px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+  .hero::before { content: ""; position: absolute; right: 70px; bottom: -80px; width: 150px; height: 150px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+  .eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: .75; font-weight: 600; }
+  .hero h1 { font-size: 30px; font-weight: 700; margin: 6px 0 4px; }
+  .hero .sub { font-size: 15px; opacity: .88; max-width: 600px; }
+  .chips { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .chip { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); border-radius: 20px; padding: 3px 12px; font-size: 12px; font-weight: 500; }
+
+  .guide-actions { display: flex; gap: 8px; justify-content: flex-end; margin: -8px 0 14px; }
+  .guide-actions a, .guide-actions button { font: inherit; font-size: 12.5px; font-weight: 600; border: 1px solid var(--line); background: #fff; color: var(--brand); border-radius: 7px; padding: 6px 12px; cursor: pointer; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
+  .guide-actions a:hover, .guide-actions button:hover { background: var(--soft); }
+
+  h2 { font-size: 19px; color: var(--brand); font-weight: 700; margin: 26px 0 10px; display: flex; align-items: center; gap: 9px; }
+  h2 .bar { width: 4px; height: 19px; background: var(--accent); border-radius: 2px; display: inline-block; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { border: 1px solid var(--line); border-radius: 9px; padding: 14px 16px; background: #fff; }
+  .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .card p { font-size: 13.5px; }
+
+  .flow { display: flex; align-items: stretch; margin: 4px 0; }
+  .state { flex: 1; border-radius: 9px; padding: 12px 14px; border: 1.5px solid; }
+  .state .tag { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; opacity: .8; }
+  .state .name { font-size: 15px; font-weight: 700; margin: 2px 0 3px; }
+  .state .desc { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+  .s1 { border-color: #F0B75A; background: var(--warn-soft); } .s1 .tag, .s1 .name { color: var(--warn); }
+  .s2 { border-color: #5FB8A8; background: var(--accent-soft); } .s2 .tag, .s2 .name { color: var(--accent); }
+  .s3 { border-color: #9DB4D3; background: #EEF3FA; } .s3 .tag, .s3 .name { color: var(--brand-2); }
+  .arrow { width: 96px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.25; padding: 0 4px; }
+  .you { font-weight: 700; color: var(--accent); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #fff; }
+  th { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1.5px solid var(--line); }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 9px; border-radius: 10px; white-space: nowrap; margin: 1px 0; }
+  .p-you { background: var(--warn-soft); color: var(--warn); }
+  .p-auto { background: #EEF3FA; color: var(--brand-2); }
+  .p-card { background: var(--accent-soft); color: var(--accent); }
+  .check { color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .btn { display: flex; gap: 12px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 14px 16px; background: #fff; }
+  .icon { width: 40px; height: 40px; flex: none; border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+  .icon.tick { background: var(--accent); } .icon.calc { background: var(--brand-2); }
+  .btn h3 { font-size: 14px; margin-bottom: 3px; }
+  .btn p { font-size: 13px; color: var(--muted); margin: 0; }
+
+  .step { display: grid; grid-template-columns: 1fr 400px; gap: 22px; padding: 20px 0; border-top: 1px solid var(--line); break-inside: avoid; page-break-inside: avoid; }
+  .steps .step:first-child { border-top: none; }
+  .num { display: inline-flex; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 700; font-size: 14px; align-items: center; justify-content: center; margin-right: 10px; flex: none; }
+  .step h3 { font-size: 17px; font-weight: 700; display: flex; align-items: center; margin-bottom: 9px; }
+  .step p { font-size: 14px; }
+  .step ul { margin: 2px 0 8px; padding-left: 19px; font-size: 14px; }
+  .step li { margin-bottom: 3px; }
+  .figs { display: flex; flex-direction: column; gap: 10px; }
+  .step.wide { grid-template-columns: 1fr; }
+  .figs.row { display: grid; grid-template-columns: 1.7fr 1fr; gap: 14px; align-items: start; }
+
+  figure.shot { margin: 0; }
+  figure.shot img { width: auto; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); display: block; box-shadow: 0 1px 3px rgba(16,24,40,.06); }
+  figure.shot figcaption { font-size: 11.5px; color: var(--muted); margin-top: 5px; text-align: center; }
+  .ph { border: 1.5px dashed #B8C2D3; border-radius: 8px; background: var(--soft); min-height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 12px; color: #7A8699; }
+  .ph .code { font-weight: 700; font-size: 12px; letter-spacing: .06em; color: var(--brand-2); margin-top: 6px; }
+  .ph .what { font-size: 12px; line-height: 1.35; margin-top: 3px; }
+  figure.shot.has-img figcaption { display: block; }
+  figure.shot:not(.has-img) figcaption { display: none; }
+
+  .note { border-radius: 7px; padding: 9px 12px; font-size: 13px; margin-top: 8px; line-height: 1.45; display: flex; gap: 8px; }
+  .note b { white-space: nowrap; }
+  .tip { background: var(--accent-soft); color: #0B5247; }
+  .warn { background: var(--warn-soft); color: #7A4505; }
+  .kbd { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); background: #fff; border-radius: 5px; padding: 0 7px; font-size: 12.5px; font-weight: 600; vertical-align: 1px; }
+  .trouble td:first-child { width: 40%; font-weight: 600; }
+
+  .next { margin-top: 22px; border-radius: 12px; background: var(--brand); color: #fff; padding: 18px 22px; display: flex; gap: 16px; align-items: center; break-inside: avoid; }
+  .next h3 { font-size: 16px; margin-bottom: 4px; }
+  .next p { font-size: 13.5px; opacity: .92; margin: 0; }
+  .next a { color: #fff; }
+  .draft { margin-top: 18px; font-size: 11.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 9px; }
+
+  /* Inicio */
+  .home-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .home-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .home-card h3 { font-size: 15px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .home-card .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .home-card p { font-size: 13px; color: var(--muted); }
+  .home-card ul { list-style: none; padding: 0; margin: 8px 0 0; }
+  .home-card li { padding: 4px 0; font-size: 13.5px; border-top: 1px solid var(--line); }
+  .home-card li:first-child { border-top: none; }
+  .home-card li a { text-decoration: none; }
+  .home-card li .soon { color: #9AA3B2; }
+
+  .empty { text-align: center; padding: 70px 20px; color: var(--muted); }
+  .empty h1 { color: var(--brand); font-size: 24px; margin-bottom: 8px; }
+
+  /* Responsive (iframe angosto) */
+  @media screen and (max-width: 820px) {
+    body.embed main { padding-top: 52px; }
+    .layout { grid-template-columns: 1fr; }
+    nav.side { display: none; position: fixed; top: 54px; left: 0; width: 280px; z-index: 20; box-shadow: 4px 0 20px rgba(0,0,0,.12); }
+    body.embed nav.side { top: 0; }
+    body.nav-open nav.side { display: block; }
+    .menu-btn { display: inline-block; }
+    body.embed .float-menu { display: block; }
+    main { padding: 20px 18px 50px; }
+    .step, .figs.row { grid-template-columns: 1fr; }
+    .grid2, .btns, .home-grid { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; } .arrow { width: auto; padding: 6px 0; }
+  }
+  .float-menu { display: none; position: fixed; top: 10px; left: 10px; z-index: 30; background: var(--brand); color: #fff; border: none; border-radius: 7px; padding: 6px 11px; font: inherit; font-size: 13px; cursor: pointer; }
+
+  /* ---------- PDF ---------- */
+  @page { size: A4; margin: 15mm 15mm 17mm 15mm; }
+  @media print {
+    body { font-size: 10pt; background: #fff; }
+    .topbar, nav.side, .guide-actions, .float-menu { display: none !important; }
+    .layout { display: block; } main { padding: 0; max-width: none; }
+    .hero h1 { font-size: 23pt; } .hero .sub { font-size: 10.5pt; } .eyebrow { font-size: 7.5pt; } .chip { font-size: 8pt; }
+    h2 { font-size: 13pt; margin: 16px 0 8px; } h2 .bar { height: 15px; }
+    .card p, .step p, .step ul, td, .btn p, .note { font-size: 9.2pt; }
+    th { font-size: 7.5pt; } .step h3 { font-size: 11.5pt; } .num { width: 25px; height: 25px; font-size: 10.5pt; }
+    .state .name { font-size: 10.5pt; } .state .desc, .arrow { font-size: 8.2pt; } .state .tag { font-size: 7pt; }
+    .step { grid-template-columns: 1fr 78mm; gap: 14px; padding: 13px 0; }
+    .step.wide { grid-template-columns: 1fr; }
+    .ph { min-height: 44mm; } .ph .code, .ph .what { font-size: 7.8pt; } figure.shot figcaption { font-size: 7.5pt; }
+    h2 { break-after: avoid; page-break-after: avoid; }
+    .pb { break-before: page; page-break-before: always; }
+    .no-split { break-inside: avoid; page-break-inside: avoid; }
+    .next h3 { font-size: 11.5pt; } .next p { font-size: 9pt; }
+    .draft { font-size: 7.5pt; }
+  }
+</style>
+</head>
+<body>
+<button class="float-menu" onclick="document.body.classList.toggle('nav-open')">☰ Guías</button>
+
+<header class="topbar">
+  <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')">☰</button>
+  <span class="logo">GGC</span><span class="sep">|</span><span class="title">Guías de usuario · Gestión de Gastos Corporativos</span>
+</header>
+
+<div class="layout">
+  <nav class="side" id="side">
+    <input class="search" id="search" type="search" placeholder="Buscar guía…">
+    <div id="menu"></div>
+  </nav>
+
+  <main id="main">
+
+<!-- ===================================================== INICIO -->
+<article data-guia="inicio">
+  <div class="hero">
+    <div class="eyebrow">Megalabs · Oficina Corporativa</div>
+    <h1 id="home-title">Guías de usuario de GGC</h1>
+    <div class="sub" id="home-sub">Paso a paso de cada tarea en GGC, la herramienta de gestión de gastos corporativos: desde que se carga un comprobante hasta que Administración registra el pago.</div>
+  </div>
+  <h2 id="home-h2"><span class="bar"></span>Elegí tu perfil</h2>
+  <div class="home-grid" id="home-grid"></div>
+  <h2><span class="bar"></span>Cómo funciona GGC en una línea</h2>
+  <p>El <strong>colaborador</strong> completa sus gastos y presenta la liquidación → el <strong>aprobador</strong> la aprueba o la rechaza entera → <strong>Administración</strong> la valida y registra el pago. Todo rechazo vuelve al colaborador con un comentario.</p>
+</article>
+
+<article data-guia="__soon">
+  <div class="empty">
+    <h1 id="soon-title">Próximamente</h1>
+    <p>Esta guía todavía está en preparación.</p>
+    <p><a href="#inicio">Volver al inicio</a></p>
+  </div>
+</article>
+
+  </main>
+</div>
+
+<script>
+const PERFIL_FIJO = "aprobador";
+/* ---------------- Catálogo de guías ----------------
+   Para publicar una guía nueva: agregar su <article data-guia="..."> arriba
+   y pasar "lista" a true acá. */
+const PERFILES = [
+  { id: "colaborador", nombre: "Colaborador", color: "#0F7B6C",
+    desc: "Completar tus gastos, armar y presentar tus liquidaciones.",
+    guias: [
+      { slug: "completar-gasto",        titulo: "Completar un gasto",                    lista: true  },
+      { slug: "presentar-liquidacion",  titulo: "Presentar una liquidación",             lista: true  },
+      { slug: "crear-reembolso",        titulo: "Crear una liquidación de reembolso",    lista: true  },
+      { slug: "corregir-rechazo",       titulo: "Corregir una liquidación rechazada",    lista: true  },
+      { slug: "seguimiento",            titulo: "Seguir una liquidación hasta el pago",  lista: true  },
+    ]},
+  { id: "aprobador", nombre: "Aprobador", color: "#2E5A8C",
+    desc: "Revisar y aprobar o rechazar las liquidaciones de tu equipo.",
+    guias: [
+      { slug: "aprobar-rechazar",       titulo: "Aprobar o rechazar una liquidación",    lista: false },
+    ]},
+  { id: "administracion", nombre: "Administración", color: "#A15C07",
+    desc: "Validar liquidaciones, registrar pagos y configurar colaboradores.",
+    guias: [
+      { slug: "validar",                titulo: "Validar una liquidación",               lista: false },
+      { slug: "registrar-pago",         titulo: "Registrar el pago (Liquidado)",         lista: false },
+      { slug: "configurar-colaborador", titulo: "Configurar un colaborador",             lista: false },
+    ]},
+];
+
+const params = new URLSearchParams(location.search);
+const MODE_EMBED = params.has("embed");
+const MODE_SOLO  = params.has("solo");
+const MODE_PRINT = params.has("print");
+if (MODE_EMBED) document.body.classList.add("embed");
+if (MODE_SOLO)  document.body.classList.add("solo");
+if (MODE_PRINT) document.body.classList.add("print");
+
+/* Perfil fijo: lo define el archivo de cada perfil (colaborador.html, aprobador.html, administracion.html)
+   o el parámetro ?perfil=. Con perfil fijo solo se muestran las guías de ese perfil. */
+const PERFIL = (typeof PERFIL_FIJO !== "undefined" && PERFIL_FIJO) || params.get("perfil");
+const VISIBLES = PERFIL ? PERFILES.filter(p => p.id === PERFIL) : PERFILES;
+
+/* Capturas: <figure class="shot" data-img="PC04-03"> busca img/PC04-03.png;
+   si no existe, muestra un recuadro con el código de la captura. */
+document.querySelectorAll("figure.shot").forEach(f => {
+  const code = f.dataset.img, what = f.dataset.what || "";
+  const ph = () => {
+    f.classList.remove("has-img");
+    f.innerHTML = `<div class="ph">📷<div class="code">CAPTURA ${code}</div><div class="what">${what}</div></div>`;
+  };
+  const img = new Image();
+  img.alt = what;
+  img.onload = () => { f.classList.add("has-img"); f.innerHTML = ""; f.appendChild(img);
+    const c = document.createElement("figcaption"); c.textContent = what; f.appendChild(c); };
+  img.onerror = ph;
+  ph();
+  img.src = `img/${code}.png`;
+});
+
+/* Menú lateral e inicio */
+function buildMenu(filter = "") {
+  const q = filter.trim().toLowerCase();
+  const menu = document.getElementById("menu");
+  menu.innerHTML = `<a class="item" href="#inicio" data-k="inicio">Inicio</a>`;
+  VISIBLES.forEach(p => {
+    const gs = p.guias.filter(g => !q || g.titulo.toLowerCase().includes(q));
+    if (!gs.length) return;
+    menu.insertAdjacentHTML("beforeend", `<div class="group"><span class="dot" style="background:${p.color}"></span>${p.nombre}</div>`);
+    gs.forEach(g => menu.insertAdjacentHTML("beforeend",
+      `<a class="item ${g.lista ? "" : "soon"}" href="#${p.id}/${g.slug}" data-k="${p.id}/${g.slug}">${g.titulo}${g.lista ? "" : '<span class="badge">Pronto</span>'}</a>`));
+  });
+  markActive();
+}
+function buildHome() {
+  if (PERFIL && VISIBLES.length) {
+    document.getElementById("home-title").textContent = `Guías de GGC · ${VISIBLES[0].nombre}`;
+    document.getElementById("home-sub").textContent = VISIBLES[0].desc + " Elegí una guía para ver el paso a paso.";
+    document.getElementById("home-h2").lastChild.textContent = "Tus guías";
+    document.getElementById("home-grid").style.gridTemplateColumns = "1fr";
+  }
+  document.getElementById("home-grid").innerHTML = VISIBLES.map(p => `
+    <div class="home-card">
+      <h3><span class="dot" style="background:${p.color}"></span>${p.nombre}</h3>
+      <p>${p.desc}</p>
+      <ul>${p.guias.map(g => g.lista
+        ? `<li><a href="#${p.id}/${g.slug}">${g.titulo}</a></li>`
+        : `<li><span class="soon">${g.titulo} · pronto</span></li>`).join("")}</ul>
+    </div>`).join("");
+}
+function findGuide(key) {
+  for (const p of VISIBLES) for (const g of p.guias) if (`${p.id}/${g.slug}` === key) return { p, g };
+  return null;
+}
+function markActive() {
+  const key = location.hash.slice(1) || "inicio";
+  document.querySelectorAll("nav.side a.item").forEach(a => a.classList.toggle("active", a.dataset.k === key));
+}
+function route() {
+  const key = decodeURIComponent(location.hash.slice(1)) || "inicio";
+  if (PERFIL && key !== "inicio" && !key.startsWith(PERFIL + "/")) { location.hash = "inicio"; return; }
+  document.querySelectorAll("article").forEach(a => a.classList.remove("show"));
+  let art = document.querySelector(`article[data-guia="${key}"]`);
+  if (!art) {
+    const info = findGuide(key);
+    document.getElementById("soon-title").textContent = info ? info.g.titulo : "Guía no encontrada";
+    art = document.querySelector('article[data-guia="__soon"]');
+  } else if (key !== "inicio") {
+    const slugFile = key.replace("/", "-");
+    const self = location.href.split("#")[0].split("?")[0];
+    art.querySelector(".guide-actions").innerHTML =
+      `<a href="pdf/GGC-${slugFile}.pdf" target="_blank" rel="noopener">⬇ Descargar PDF</a>` +
+      `<a href="${self}?solo#${key}" target="_blank" rel="noopener">↗ Abrir solo esta guía</a>`;
+    const info = findGuide(key);
+    if (info) document.title = `GGC · ${info.g.titulo}`;
+  }
+  art.classList.add("show");
+  document.body.classList.remove("nav-open");
+  markActive();
+  if (!MODE_PRINT) window.scrollTo(0, 0);
+}
+document.getElementById("search").addEventListener("input", e => buildMenu(e.target.value));
+window.addEventListener("hashchange", route);
+buildMenu(); buildHome(); route();
+</script>
+</body>
+</html>

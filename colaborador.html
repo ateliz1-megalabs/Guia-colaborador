@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GGC · Guías de usuario</title>
+<style>
+  :root {
+    --ink: #1B2333; --muted: #5B6578; --line: #E3E7EE; --soft: #F5F7FA; --bg: #FAFBFC;
+    --brand: #1F3A5F; --brand-2: #2E5A8C; --accent: #0F7B6C; --accent-soft: #E6F4F1;
+    --warn: #A15C07; --warn-soft: #FDF3E3; --bad: #B42318; --bad-soft: #FDECEA;
+    --side: 260px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif; color: var(--ink); font-size: 14px; line-height: 1.55; margin: 0; background: var(--bg); }
+  h1, h2, h3 { margin: 0; letter-spacing: -0.01em; }
+  p { margin: 0 0 8px; }
+  strong { font-weight: 600; }
+  a { color: var(--brand-2); }
+
+  /* ---------- Estructura ---------- */
+  .topbar { height: 54px; background: var(--brand); color: #fff; display: flex; align-items: center; gap: 12px; padding: 0 20px; position: sticky; top: 0; z-index: 10; }
+  .topbar .logo { font-weight: 800; letter-spacing: .02em; font-size: 16px; }
+  .topbar .sep { opacity: .4; }
+  .topbar .title { opacity: .85; font-size: 14px; }
+  .menu-btn { display: none; background: none; border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 6px; padding: 4px 9px; font: inherit; cursor: pointer; }
+  .layout { display: grid; grid-template-columns: var(--side) 1fr; min-height: calc(100vh - 54px); }
+  nav.side { background: #fff; border-right: 1px solid var(--line); padding: 16px 10px 40px; position: sticky; top: 54px; height: calc(100vh - 54px); overflow-y: auto; }
+  nav.side .search { width: 100%; border: 1px solid var(--line); border-radius: 7px; padding: 7px 10px; font: inherit; font-size: 13px; margin-bottom: 12px; background: var(--soft); }
+  nav.side .group { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 14px 10px 6px; display: flex; align-items: center; gap: 6px; }
+  nav.side .group .dot { width: 8px; height: 8px; border-radius: 50%; }
+  nav.side a.item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; color: var(--ink); text-decoration: none; font-size: 13.5px; }
+  nav.side a.item:hover { background: var(--soft); }
+  nav.side a.item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  nav.side a.item.soon { color: #9AA3B2; }
+  nav.side a.item .badge { font-size: 10px; font-weight: 600; background: var(--soft); color: #9AA3B2; border-radius: 8px; padding: 1px 6px; white-space: nowrap; }
+  main { padding: 28px 36px 60px; max-width: 1020px; width: 100%; }
+
+  /* Modos */
+  body.embed .topbar { display: none; }
+  body.embed .layout { min-height: 100vh; }
+  body.embed nav.side { top: 0; height: 100vh; }
+  body.solo .topbar, body.solo nav.side { display: none; }
+  body.solo .layout { display: block; }
+  body.solo main { margin: 0 auto; }
+  body.print { background: #fff; }
+  body.print .topbar, body.print nav.side, body.print .guide-actions { display: none !important; }
+  body.print .layout { display: block; }
+  body.print main { padding: 0; max-width: none; }
+
+  article { display: none; }
+  article.show { display: block; }
+
+  /* ---------- Contenido de guía ---------- */
+  .hero { background: var(--brand); color: #fff; border-radius: 12px; padding: 26px 30px 22px; margin-bottom: 20px; position: relative; overflow: hidden; }
+  .hero::after { content: ""; position: absolute; right: -40px; top: -40px; width: 190px; height: 190px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+  .hero::before { content: ""; position: absolute; right: 70px; bottom: -80px; width: 150px; height: 150px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+  .eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: .75; font-weight: 600; }
+  .hero h1 { font-size: 30px; font-weight: 700; margin: 6px 0 4px; }
+  .hero .sub { font-size: 15px; opacity: .88; max-width: 600px; }
+  .chips { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .chip { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); border-radius: 20px; padding: 3px 12px; font-size: 12px; font-weight: 500; }
+
+  .guide-actions { display: flex; gap: 8px; justify-content: flex-end; margin: -8px 0 14px; }
+  .guide-actions a, .guide-actions button { font: inherit; font-size: 12.5px; font-weight: 600; border: 1px solid var(--line); background: #fff; color: var(--brand); border-radius: 7px; padding: 6px 12px; cursor: pointer; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
+  .guide-actions a:hover, .guide-actions button:hover { background: var(--soft); }
+
+  h2 { font-size: 19px; color: var(--brand); font-weight: 700; margin: 26px 0 10px; display: flex; align-items: center; gap: 9px; }
+  h2 .bar { width: 4px; height: 19px; background: var(--accent); border-radius: 2px; display: inline-block; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { border: 1px solid var(--line); border-radius: 9px; padding: 14px 16px; background: #fff; }
+  .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .card p { font-size: 13.5px; }
+
+  .flow { display: flex; align-items: stretch; margin: 4px 0; }
+  .state { flex: 1; border-radius: 9px; padding: 12px 14px; border: 1.5px solid; }
+  .state .tag { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; opacity: .8; }
+  .state .name { font-size: 15px; font-weight: 700; margin: 2px 0 3px; }
+  .state .desc { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+  .s1 { border-color: #F0B75A; background: var(--warn-soft); } .s1 .tag, .s1 .name { color: var(--warn); }
+  .s2 { border-color: #5FB8A8; background: var(--accent-soft); } .s2 .tag, .s2 .name { color: var(--accent); }
+  .s3 { border-color: #9DB4D3; background: #EEF3FA; } .s3 .tag, .s3 .name { color: var(--brand-2); }
+  .arrow { width: 96px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.25; padding: 0 4px; }
+  .you { font-weight: 700; color: var(--accent); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #fff; }
+  th { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1.5px solid var(--line); }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 9px; border-radius: 10px; white-space: nowrap; margin: 1px 0; }
+  .p-you { background: var(--warn-soft); color: var(--warn); }
+  .p-auto { background: #EEF3FA; color: var(--brand-2); }
+  .p-card { background: var(--accent-soft); color: var(--accent); }
+  .check { color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .btn { display: flex; gap: 12px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 14px 16px; background: #fff; }
+  .icon { width: 40px; height: 40px; flex: none; border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+  .icon.tick { background: var(--accent); } .icon.calc { background: var(--brand-2); }
+  .btn h3 { font-size: 14px; margin-bottom: 3px; }
+  .btn p { font-size: 13px; color: var(--muted); margin: 0; }
+
+  .step { display: grid; grid-template-columns: 1fr 400px; gap: 22px; padding: 20px 0; border-top: 1px solid var(--line); break-inside: avoid; page-break-inside: avoid; }
+  .steps .step:first-child { border-top: none; }
+  .num { display: inline-flex; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 700; font-size: 14px; align-items: center; justify-content: center; margin-right: 10px; flex: none; }
+  .step h3 { font-size: 17px; font-weight: 700; display: flex; align-items: center; margin-bottom: 9px; }
+  .step p { font-size: 14px; }
+  .step ul { margin: 2px 0 8px; padding-left: 19px; font-size: 14px; }
+  .step li { margin-bottom: 3px; }
+  .figs { display: flex; flex-direction: column; gap: 10px; }
+  .step.wide { grid-template-columns: 1fr; }
+  .figs.row { display: grid; grid-template-columns: 1.7fr 1fr; gap: 14px; align-items: start; }
+
+  figure.shot { margin: 0; }
+  figure.shot img { width: auto; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); display: block; box-shadow: 0 1px 3px rgba(16,24,40,.06); }
+  figure.shot figcaption { font-size: 11.5px; color: var(--muted); margin-top: 5px; text-align: center; }
+  .ph { border: 1.5px dashed #B8C2D3; border-radius: 8px; background: var(--soft); min-height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 12px; color: #7A8699; }
+  .ph .code { font-weight: 700; font-size: 12px; letter-spacing: .06em; color: var(--brand-2); margin-top: 6px; }
+  .ph .what { font-size: 12px; line-height: 1.35; margin-top: 3px; }
+  figure.shot.has-img figcaption { display: block; }
+  figure.shot:not(.has-img) figcaption { display: none; }
+
+  .note { border-radius: 7px; padding: 9px 12px; font-size: 13px; margin-top: 8px; line-height: 1.45; display: flex; gap: 8px; }
+  .note b { white-space: nowrap; }
+  .tip { background: var(--accent-soft); color: #0B5247; }
+  .warn { background: var(--warn-soft); color: #7A4505; }
+  .kbd { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); background: #fff; border-radius: 5px; padding: 0 7px; font-size: 12.5px; font-weight: 600; vertical-align: 1px; }
+  .trouble td:first-child { width: 40%; font-weight: 600; }
+
+  .next { margin-top: 22px; border-radius: 12px; background: var(--brand); color: #fff; padding: 18px 22px; display: flex; gap: 16px; align-items: center; break-inside: avoid; }
+  .next h3 { font-size: 16px; margin-bottom: 4px; }
+  .next p { font-size: 13.5px; opacity: .92; margin: 0; }
+  .next a { color: #fff; }
+  .draft { margin-top: 18px; font-size: 11.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 9px; }
+
+  /* Inicio */
+  .home-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .home-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .home-card h3 { font-size: 15px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .home-card .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .home-card p { font-size: 13px; color: var(--muted); }
+  .home-card ul { list-style: none; padding: 0; margin: 8px 0 0; }
+  .home-card li { padding: 4px 0; font-size: 13.5px; border-top: 1px solid var(--line); }
+  .home-card li:first-child { border-top: none; }
+  .home-card li a { text-decoration: none; }
+  .home-card li .soon { color: #9AA3B2; }
+
+  .empty { text-align: center; padding: 70px 20px; color: var(--muted); }
+  .empty h1 { color: var(--brand); font-size: 24px; margin-bottom: 8px; }
+
+  /* Responsive (iframe angosto) */
+  @media screen and (max-width: 820px) {
+    body.embed main { padding-top: 52px; }
+    .layout { grid-template-columns: 1fr; }
+    nav.side { display: none; position: fixed; top: 54px; left: 0; width: 280px; z-index: 20; box-shadow: 4px 0 20px rgba(0,0,0,.12); }
+    body.embed nav.side { top: 0; }
+    body.nav-open nav.side { display: block; }
+    .menu-btn { display: inline-block; }
+    body.embed .float-menu { display: block; }
+    main { padding: 20px 18px 50px; }
+    .step, .figs.row { grid-template-columns: 1fr; }
+    .grid2, .btns, .home-grid { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; } .arrow { width: auto; padding: 6px 0; }
+  }
+  .float-menu { display: none; position: fixed; top: 10px; left: 10px; z-index: 30; background: var(--brand); color: #fff; border: none; border-radius: 7px; padding: 6px 11px; font: inherit; font-size: 13px; cursor: pointer; }
+
+  /* ---------- PDF ---------- */
+  @page { size: A4; margin: 15mm 15mm 17mm 15mm; }
+  @media print {
+    body { font-size: 10pt; background: #fff; }
+    .topbar, nav.side, .guide-actions, .float-menu { display: none !important; }
+    .layout { display: block; } main { padding: 0; max-width: none; }
+    .hero h1 { font-size: 23pt; } .hero .sub { font-size: 10.5pt; } .eyebrow { font-size: 7.5pt; } .chip { font-size: 8pt; }
+    h2 { font-size: 13pt; margin: 16px 0 8px; } h2 .bar { height: 15px; }
+    .card p, .step p, .step ul, td, .btn p, .note { font-size: 9.2pt; }
+    th { font-size: 7.5pt; } .step h3 { font-size: 11.5pt; } .num { width: 25px; height: 25px; font-size: 10.5pt; }
+    .state .name { font-size: 10.5pt; } .state .desc, .arrow { font-size: 8.2pt; } .state .tag { font-size: 7pt; }
+    .step { grid-template-columns: 1fr 78mm; gap: 14px; padding: 13px 0; }
+    .step.wide { grid-template-columns: 1fr; }
+    .ph { min-height: 44mm; } .ph .code, .ph .what { font-size: 7.8pt; } figure.shot figcaption { font-size: 7.5pt; }
+    h2 { break-after: avoid; page-break-after: avoid; }
+    .pb { break-before: page; page-break-before: always; }
+    .no-split { break-inside: avoid; page-break-inside: avoid; }
+    .next h3 { font-size: 11.5pt; } .next p { font-size: 9pt; }
+    .draft { font-size: 7.5pt; }
+  }
+</style>
+</head>
+<body>
+<button class="float-menu" onclick="document.body.classList.toggle('nav-open')">☰ Guías</button>
+
+<header class="topbar">
+  <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')">☰</button>
+  <span class="logo">GGC</span><span class="sep">|</span><span class="title">Guías de usuario · Gestión de Gastos Corporativos</span>
+</header>
+
+<div class="layout">
+  <nav class="side" id="side">
+    <input class="search" id="search" type="search" placeholder="Buscar guía…">
+    <div id="menu"></div>
+  </nav>
+
+  <main id="main">
+
+<!-- ===================================================== INICIO -->
+<article data-guia="inicio">
+  <div class="hero">
+    <div class="eyebrow">Megalabs · Oficina Corporativa</div>
+    <h1 id="home-title">Guías de usuario de GGC</h1>
+    <div class="sub" id="home-sub">Paso a paso de cada tarea en GGC, la herramienta de gestión de gastos corporativos: desde que se carga un comprobante hasta que Administración registra el pago.</div>
+  </div>
+  <h2 id="home-h2"><span class="bar"></span>Elegí tu perfil</h2>
+  <div class="home-grid" id="home-grid"></div>
+  <h2><span class="bar"></span>Cómo funciona GGC en una línea</h2>
+  <p>El <strong>colaborador</strong> completa sus gastos y presenta la liquidación → el <strong>aprobador</strong> la aprueba o la rechaza entera → <strong>Administración</strong> la valida y registra el pago. Todo rechazo vuelve al colaborador con un comentario.</p>
+</article>
+
+<!-- ===================================================== COLABORADOR · COMPLETAR UN GASTO -->
+<article data-guia="colaborador/completar-gasto">
+  <div class="hero">
+    <div class="eyebrow">Megalabs · Oficina Corporativa · GGC</div>
+    <h1>Completar un gasto</h1>
+    <div class="sub">Cómo cargar los datos que faltan y el comprobante de un gasto para que quede en <strong>Completado</strong> y puedas presentar tu liquidación.</div>
+    <div class="chips">
+      <span class="chip">Perfil: Colaborador</span>
+      <span class="chip">≈ 2 minutos por gasto</span>
+      <span class="chip">Sirve para tarjeta corporativa y reembolsos</span>
+    </div>
+  </div>
+  <div class="guide-actions"></div>
+
+  <h2><span class="bar"></span>¿Cuándo tenés que hacerlo?</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Gastos con tarjeta corporativa</h3>
+      <p>Cuando llega el estado de cuenta, GGC crea <strong>un gasto por cada movimiento</strong> de tu tarjeta y te manda un correo de <em>Notificaciones GCTI</em> con el asunto <em>“Liquidación de gastos N.º … generada”</em>, el período y la cantidad de gastos en pesos y en dólares. La mayoría de los datos ya vienen cargados: <strong>vos completás lo que falta</strong>.</p>
+    </div>
+    <div class="card">
+      <h3>Reembolsos (pagaste con tu dinero)</h3>
+      <p>Vos creás el gasto en GGC, lo asociás a tu liquidación de reembolso y lo completás. El procedimiento para completarlo es <strong>el mismo</strong> que el de esta guía; solo tenés que cargar también fecha, importe, moneda y forma de pago.</p>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>El recorrido de un gasto</h2>
+  <div class="flow">
+    <div class="state s1"><div class="tag">Estado inicial</div><div class="name">Pendiente de información</div><div class="desc">Falta algún dato o el comprobante. Es el único estado en que podés editarlo.</div></div>
+    <div class="arrow"><span class="you">Vos</span><svg width="54" height="14" viewBox="0 0 54 14"><path d="M2 7h46" stroke="#0F7B6C" stroke-width="2"/><path d="M44 2l7 5-7 5" fill="none" stroke="#0F7B6C" stroke-width="2"/></svg>apretás el tick ✓</div>
+    <div class="state s2"><div class="tag">Listo para presentar</div><div class="name">Completado</div><div class="desc">Tiene todos los datos y el comprobante. Ya no se puede editar.</div></div>
+    <div class="arrow">Administración<svg width="54" height="14" viewBox="0 0 54 14"><path d="M2 7h46" stroke="#8A94A6" stroke-width="2" stroke-dasharray="4 3"/><path d="M44 2l7 5-7 5" fill="none" stroke="#8A94A6" stroke-width="2"/></svg>paga la liquidación</div>
+    <div class="state s3"><div class="tag">Final</div><div class="name">Liquidado</div><div class="desc">El gasto fue pagado junto con toda su liquidación.</div></div>
+  </div>
+  <div class="note warn"><b>Importante:</b><span>guardar el formulario <strong>no</strong> cambia el estado. El gasto solo pasa a <strong>Completado</strong> cuando apretás el <strong>botón de comprobación (tick)</strong>.</span></div>
+
+  <div class="pb"></div>
+  <h2><span class="bar"></span>Qué datos tiene que tener el gasto</h2>
+  <table class="no-split">
+    <thead><tr><th>Campo</th><th>¿Quién lo carga?</th><th>¿Lo revisa el tick?</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Concepto de gasto</strong></td><td><span class="pill p-you">Vos</span></td><td class="check">✓ Sí</td><td>Qué fue el gasto, en tus palabras.</td></tr>
+      <tr><td><strong>Canal</strong></td><td><span class="pill p-you">Vos</span></td><td class="check">✓ Sí</td><td>La empresa a la que corresponde el gasto.</td></tr>
+      <tr><td><strong>Cuenta contable</strong></td><td><span class="pill p-you">Vos</span></td><td class="check">✓ Sí</td><td>Se elige de una lista.</td></tr>
+      <tr><td><strong>Comprobante adjunto</strong></td><td><span class="pill p-you">Vos</span></td><td class="check">✓ Sí</td><td>Foto o PDF del ticket o factura. <strong>Siempre obligatorio.</strong></td></tr>
+      <tr><td><strong>Liquidación</strong></td><td><span class="pill p-card">Viene cargada (tarjeta)</span> <span class="pill p-you">Vos (reembolso)</span></td><td class="check">✓ Sí</td><td>La liquidación a la que pertenece el gasto.</td></tr>
+      <tr><td>Fecha, importe, moneda, comercio, forma de pago</td><td><span class="pill p-card">Viene cargada (tarjeta)</span> <span class="pill p-you">Vos (reembolso)</span></td><td>Al crear</td><td>Moneda: pesos o dólares.</td></tr>
+      <tr><td>Centro de costo y Aprobador</td><td><span class="pill p-auto">Automático</span></td><td>—</td><td>Se copian de tu ficha.</td></tr>
+      <tr><td><strong>Áreas Terapéuticas</strong> y <strong>Proyecto</strong></td><td><span class="pill p-you">Vos, si sos de Marketing</span></td><td>—</td><td><strong>Obligatorios para Marketing.</strong> El gasto se divide entre cada área terapéutica seleccionada.</td></tr>
+      <tr><td>Comentarios</td><td><span class="pill p-you">Vos, opcional</span></td><td>—</td><td>Observaciones del gasto.</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="bar"></span>Los dos botones que vas a usar</h2>
+  <div class="btns">
+    <div class="btn">
+      <div class="icon tick"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div><h3>Botón de comprobación (tick)</h3><p>Último ícono de la barra de acciones del <strong>formulario de Gasto</strong>. Revisa los datos y, si está todo, pasa el gasto a Completado. <strong>Es el de esta guía.</strong></p></div>
+    </div>
+    <div class="btn">
+      <div class="icon calc"><svg width="20" height="22" viewBox="0 0 20 22"><rect x="2" y="1.5" width="16" height="19" rx="2.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="5" y="4.5" width="10" height="4" rx="1" fill="#fff"/><circle cx="6.5" cy="12.5" r="1.1" fill="#fff"/><circle cx="10" cy="12.5" r="1.1" fill="#fff"/><circle cx="13.5" cy="12.5" r="1.1" fill="#fff"/><circle cx="6.5" cy="16.5" r="1.1" fill="#fff"/><circle cx="10" cy="16.5" r="1.1" fill="#fff"/><circle cx="13.5" cy="16.5" r="1.1" fill="#fff"/></svg></div>
+      <div><h3>Botón de cálculo (calculadora)</h3><p>Último ícono de la barra de acciones del <strong>formulario de Liquidación</strong>. Se usa al final, cuando todos los gastos están completados, para presentarla. Lo vemos en la guía <em>Presentar una liquidación</em>.</p></div>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>Paso a paso</h2>
+  <div class="steps">
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">1</span>Abrí el gasto</h3>
+        <ul>
+          <li><strong>Desde el correo:</strong> en el aviso <em>“Liquidación de gastos N.º … generada”</em>, hacé clic en <strong>AQUÍ</strong>. Tu liquidación se abre en una pestaña de Merlin. Entrá a la pestaña <strong>Gastos</strong> (al lado de <em>Detalle</em>) y abrí el gasto que vas a completar.</li>
+          <li><strong>Desde el menú:</strong> entrá a <strong>Gastos</strong> y abrí uno que esté en <strong>Pendiente de información</strong>.</li>
+        </ul>
+        <div class="note tip"><b>Tip:</b><span>cada gasto se abre en su propia pestaña arriba del formulario, así podés ir y volver entre la liquidación y sus gastos.</span></div>
+      </div>
+      <div class="figs row">
+        <figure class="shot" data-img="PC02-01" data-what="Correo de aviso: hacé clic en AQUÍ"></figure>
+        <figure class="shot" data-img="PC03-01" data-what="Liquidación abierta: pestaña Gastos"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">2</span>Revisá lo que ya viene cargado</h3>
+        <p>En un gasto de tarjeta ya vas a ver la <strong>fecha</strong>, el <strong>importe</strong>, la <strong>moneda</strong>, el <strong>proveedor/comercio</strong>, la <strong>forma de pago</strong> (Tarjeta corporativa) y la <strong>liquidación</strong>. El <strong>centro de costo</strong> y el <strong>aprobador</strong> se completan solos desde tu ficha.</p>
+        <p>Comprobá que el movimiento sea tuyo y que el importe coincida con tu comprobante.</p>
+        <p>En la imagen están marcados los <strong>4 datos que tenés que completar</strong>. El estado del gasto se ve arriba a la derecha del formulario.</p>
+        <div class="note tip"><b>Marketing:</b><span>si sos de Marketing, también completás <em>Áreas Terapéuticas</em> y <em>Proyecto</em> (paso 6). <em>Comentarios</em> es opcional para todos.</span></div>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC04-01" data-what="Gasto recién generado: los campos marcados son los que faltan"></figure></div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">3</span>Escribí el concepto del gasto</h3>
+        <p>En <strong>Concepto de gasto</strong>, describí brevemente qué fue. Que se entienda sin ver el ticket.</p>
+        <div class="note tip"><b>Ejemplos:</b><span>“Almuerzo con cliente Laboratorio X”, “Taxi aeropuerto – viaje a São Paulo”, “Suscripción software de diseño – noviembre”.</span></div>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC04-03" data-what="Concepto de gasto completado"></figure></div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">4</span>Elegí el canal (empresa)</h3>
+        <p>En <strong>Canal</strong>, seleccioná de la lista la <strong>empresa</strong> a la que corresponde el gasto (por ejemplo, <em>CORPORATIVO</em>).</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC04-04" data-what="Canal seleccionado"></figure></div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">5</span>Elegí la cuenta contable</h3>
+        <p>En <strong>Cuenta contable</strong>, seleccioná de la lista la que corresponde al tipo de gasto (por ejemplo, <em>Traslados</em> para un Uber o un taxi).</p>
+        <div class="note tip"><b>Tip:</b><span>el <strong>centro de costo</strong> no lo tenés que elegir: ya viene de tu ficha. Si te parece que es incorrecto, avisá a Administración.</span></div>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC04-05" data-what="Cuenta contable seleccionada"></figure></div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">6</span>Si sos de Marketing: áreas terapéuticas y proyecto</h3>
+        <p>Los colaboradores de <strong>Marketing</strong> también tienen que completar:</p>
+        <ul>
+          <li><strong>Áreas Terapéuticas:</strong> seleccioná una o más áreas a las que corresponde el gasto.</li>
+          <li><strong>Proyecto:</strong> el proyecto al que se imputa el gasto.</li>
+        </ul>
+        <div class="note warn"><b>Importante:</b><span>el importe del gasto <strong>se divide entre cada área terapéutica seleccionada</strong>. Elegí solo las áreas a las que realmente corresponde.</span></div>
+        <p style="margin-top:8px">Si no sos de Marketing, salteá este paso.</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC04-06" data-what="Áreas Terapéuticas y Proyecto, debajo de Canal"></figure></div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">7</span>Adjuntá el comprobante</h3>
+        <p>En <strong>Comprobante adjunto</strong>, apretá el <strong>+</strong> verde. Arrastrá la foto o el PDF del ticket o la factura, o hacé clic en <strong>Abrir</strong> para buscarlo. El archivo queda listado debajo.</p>
+        <ul><li>Que se lean bien la fecha, el comercio y el importe.</li><li>Un comprobante por gasto.</li></ul>
+        <div class="note warn"><b>Importante:</b><span>sin comprobante el gasto <strong>no puede pasar a Completado</strong>.</span></div>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC04-07" data-what="Comprobante adjuntado"></figure></div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">8</span>Apretá el tick (botón de comprobación)</h3>
+        <p>En la <strong>barra de acciones</strong> arriba del formulario, apretá el <strong>último ícono</strong>, el <span class="kbd"><svg width="11" height="11" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0F7B6C" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg> tick</span>, después de la línea separadora.</p>
+        <p>GGC guarda el gasto y revisa que estén <strong>concepto, canal, cuenta contable, comprobante y liquidación</strong>.</p>
+        <ul>
+          <li><strong>Si está todo:</strong> el gasto pasa a <strong>Completado</strong>.</li>
+          <li><strong>Si falta algo:</strong> aparece un aviso naranja <em>“No se pudo procesar la solicitud: Faltan completar los siguientes campos: …”</em> con <strong>todos</strong> los campos que faltan. Completalos y volvé a apretar el tick.</li>
+        </ul>
+      </div>
+      <div class="figs">
+        <figure class="shot" data-img="PC04-09" data-what="El tick es el último ícono de la barra"></figure>
+        <figure class="shot" data-img="PC05-03" data-what="Aviso cuando faltan campos"></figure>
+      </div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">9</span>Verificá que quedó en Completado</h3>
+        <p>Aparece el aviso <strong>“Guardado correctamente”</strong> y el estado, arriba a la derecha, cambia a <strong>Completado</strong>. Desde este momento el gasto <strong>ya no se puede editar</strong>.</p>
+        <p>Repetí los pasos 1 a 8 con cada gasto de la liquidación que siga en Pendiente de información.</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC04-10" data-what="Aviso “Guardado correctamente” y estado Completado"></figure></div>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>Si algo no sale como esperabas</h2>
+  <table class="trouble">
+    <thead><tr><th>Lo que pasa</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>Apreté el tick y el gasto sigue en Pendiente de información.</td><td>Falta algún dato. El aviso naranja dice qué campos faltan. Completalos y volvé a apretar el tick.</td></tr>
+      <tr><td>Guardé todo pero el estado no cambió.</td><td>Guardar (botón del disquete) no alcanza. Tenés que apretar el <strong>tick</strong> (paso 8).</td></tr>
+      <tr><td>No puedo modificar un campo.</td><td>Solo se editan gastos en <strong>Pendiente de información</strong>. Si ya está Completado, se corrige cuando la liquidación vuelve rechazada (guía <a href="#colaborador/corregir-rechazo">Corregir una liquidación rechazada</a>). Centro de costo y aprobador vienen de tu ficha.</td></tr>
+      <tr><td>Me dice que ya existe un gasto con los mismos datos.</td><td>GGC no permite gastos duplicados. Revisá en <strong>Gastos</strong> si ya lo cargaste antes.</td></tr>
+      <tr><td>El centro de costo o el aprobador son incorrectos.</td><td>Vienen de tu ficha de colaborador. Avisá a Administración para que la actualicen.</td></tr>
+      <tr><td>No encuentro la liquidación para asociar mi gasto de reembolso.</td><td>Primero tenés que crear tu liquidación de reembolso (guía <a href="#colaborador/crear-reembolso">Crear una liquidación de reembolso</a>). Los gastos de tarjeta y de reembolso van en liquidaciones distintas.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="next">
+    <div class="icon calc" style="width:46px;height:46px;background:rgba(255,255,255,.15)"><svg width="22" height="24" viewBox="0 0 20 22"><rect x="2" y="1.5" width="16" height="19" rx="2.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="5" y="4.5" width="10" height="4" rx="1" fill="#fff"/><circle cx="6.5" cy="12.5" r="1.1" fill="#fff"/><circle cx="10" cy="12.5" r="1.1" fill="#fff"/><circle cx="13.5" cy="12.5" r="1.1" fill="#fff"/><circle cx="6.5" cy="16.5" r="1.1" fill="#fff"/><circle cx="10" cy="16.5" r="1.1" fill="#fff"/><circle cx="13.5" cy="16.5" r="1.1" fill="#fff"/></svg></div>
+    <div>
+      <h3>¿Y después?</h3>
+      <p>Cuando termines de completar los gastos, abrí la liquidación, apretá la <strong>calculadora</strong> y presentala a tu aprobador. Solo se liquidan los gastos en Completado. Lo explicamos en la guía <a href="#colaborador/presentar-liquidacion"><strong>Presentar una liquidación</strong></a>.</p>
+    </div>
+  </div>
+  <div class="draft">Versión 1 · Noviembre 2026 · Capturas del ambiente de prueba</div>
+</article>
+
+<!-- ===================================================== COLABORADOR · PRESENTAR UNA LIQUIDACIÓN -->
+<article data-guia="colaborador/presentar-liquidacion">
+  <div class="hero">
+    <div class="eyebrow">Megalabs · Oficina Corporativa · GGC</div>
+    <h1>Presentar una liquidación</h1>
+    <div class="sub">Cómo enviar tu liquidación al aprobador una vez que completaste sus gastos.</div>
+    <div class="chips">
+      <span class="chip">Perfil: Colaborador</span>
+      <span class="chip">≈ 1 minuto</span>
+      <span class="chip">Sirve para tarjeta corporativa y reembolsos</span>
+    </div>
+  </div>
+  <div class="guide-actions"></div>
+
+  <h2><span class="bar"></span>Antes de empezar</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Solo se liquidan los gastos completados</h3>
+      <p>Podés presentar la liquidación aunque algún gasto siga en <em>Pendiente de información</em>, pero <strong>ese gasto no se liquida</strong>. Para que se incluyan todos, completalos antes (guía <a href="#colaborador/completar-gasto">Completar un gasto</a>).</p>
+    </div>
+    <div class="card">
+      <h3>Qué pasa al presentarla</h3>
+      <p>La liquidación pasa a <strong>Presentada</strong>, tu aprobador recibe un correo para revisarla y <strong>los gastos quedan bloqueados</strong>: ya no se pueden modificar salvo que la liquidación vuelva rechazada.</p>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>El recorrido de la liquidación</h2>
+  <div class="flow">
+    <div class="state s1"><div class="tag">Estado inicial</div><div class="name">En preparación</div><div class="desc">Creada, con gastos que se están completando.</div></div>
+    <div class="arrow"><span class="you">Vos</span><svg width="54" height="14" viewBox="0 0 54 14"><path d="M2 7h46" stroke="#0F7B6C" stroke-width="2"/><path d="M44 2l7 5-7 5" fill="none" stroke="#0F7B6C" stroke-width="2"/></svg>calculadora y Presentada</div>
+    <div class="state s2"><div class="tag">Espera al aprobador</div><div class="name">Presentada</div><div class="desc">Enviada al aprobador. Ya no se edita.</div></div>
+    <div class="arrow">Aprobador<svg width="54" height="14" viewBox="0 0 54 14"><path d="M2 7h46" stroke="#8A94A6" stroke-width="2" stroke-dasharray="4 3"/><path d="M44 2l7 5-7 5" fill="none" stroke="#8A94A6" stroke-width="2"/></svg>aprueba o rechaza</div>
+    <div class="state s3"><div class="tag">Siguiente etapa</div><div class="name">Aprobado / Rechazado</div><div class="desc">Si se aprueba, pasa a Administración. Si se rechaza, vuelve a vos.</div></div>
+  </div>
+
+  <h2><span class="bar"></span>Paso a paso</h2>
+  <div class="steps">
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">1</span>Revisá qué gastos están completados</h3>
+        <p>Abrí la liquidación (desde el correo o desde el menú <strong>Liquidaciones</strong>) y entrá a la pestaña <strong>Gastos</strong>.</p>
+        <p>Solo los gastos en <strong>Completado</strong> se liquidan.</p>
+        <div class="note tip"><b>Tip:</b><span>si alguno sigue en <em>Pendiente de información</em> y querés que se incluya, abrilo y completalo antes de seguir.</span></div>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC08-01" data-what="Pestaña Gastos con todos los gastos en Completado"></figure></div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">2</span>Apretá la calculadora</h3>
+        <p>Volvé a la pestaña <strong>Detalle</strong>. En la barra de acciones, apretá el <strong>último ícono</strong>, la <span class="kbd"><svg width="10" height="11" viewBox="0 0 20 22"><rect x="2" y="1.5" width="16" height="19" rx="2.5" fill="none" stroke="#2E5A8C" stroke-width="2.4"/><rect x="5" y="4.5" width="10" height="4" rx="1" fill="#2E5A8C"/><circle cx="6.5" cy="13" r="1.4" fill="#2E5A8C"/><circle cx="13.5" cy="13" r="1.4" fill="#2E5A8C"/><circle cx="6.5" cy="17" r="1.4" fill="#2E5A8C"/><circle cx="13.5" cy="17" r="1.4" fill="#2E5A8C"/></svg> calculadora</span>.</p>
+        <p>GGC cuenta los gastos de la liquidación y actualiza los importes y los contadores.</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC08-02" data-what="La calculadora es el último ícono de la barra de la liquidación"></figure></div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">3</span>Revisá los contadores</h3>
+        <table>
+          <tbody>
+            <tr><td style="width:30%"><strong>Importe $U / USD</strong></td><td>Monto total de los gastos en cada moneda.</td></tr>
+            <tr><td><strong>Totales $U / USD</strong></td><td>Cuántos gastos hay en cada moneda.</td></tr>
+            <tr><td><strong>Completados $U / USD</strong></td><td>Cuántos de esos gastos ya están en Completado.</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:8px">Son <strong>valores de referencia</strong> para que veas cómo está tu liquidación.</p>
+        <div class="note tip"><b>Todo completo:</b><span><strong>Completados = Totales</strong> en pesos <strong>y</strong> en dólares. En la imagen: 2 gastos en pesos, los 2 completados, y ninguno en dólares.</span></div>
+        <div class="note warn"><b>Si no coinciden:</b><span>hay gastos sin completar. Podés presentarla igual, pero <strong>esos gastos no se liquidan</strong>. Si querés incluirlos, completalos y volvé a apretar la calculadora.</span></div>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC08-03" data-what="Contadores de la liquidación: todos los gastos completados"></figure></div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">4</span>Cambiá el estado a Presentada</h3>
+        <p>Arriba a la derecha está el selector de estado, que ahora dice <strong>En preparación</strong>. Desplegalo y elegí <strong>Presentada</strong> (<em>“El colaborador presentó la liquidación al aprobador”</em>).</p>
+      </div>
+      <div class="figs row" style="grid-template-columns:1fr 1fr"><figure class="shot" data-img="PC08-04" data-what="Selector de estado (En preparación) y botón guardar"></figure><figure class="shot" data-img="PC08-05" data-what="Elegí Presentada y apretá guardar"></figure></div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">5</span>Guardá y verificá</h3>
+        <p>Apretá el botón verde de <strong>guardar</strong> (el disquete), al lado del selector.</p>
+        <p>El estado queda en <strong>Presentada</strong>. Tu aprobador recibe un correo para revisarla.</p>
+        <div class="note warn"><b>Importante:</b><span>desde ahora <strong>no podés modificar</strong> la liquidación ni sus gastos.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>¿Qué pasa después?</h2>
+  <table>
+    <thead><tr><th>Si el aprobador…</th><th>La liquidación pasa a</th><th>Qué hacés vos</th></tr></thead>
+    <tbody>
+      <tr><td><strong>La aprueba</strong></td><td><span class="pill p-card">Aprobado</span></td><td>Nada. Pasa a Administración para validarla y pagarla. Te llega un correo cuando la validan y otro cuando se paga (<span class="pill p-auto">Liquidado</span>). Ver <a href="#colaborador/seguimiento">Seguir una liquidación hasta el pago</a>.</td></tr>
+      <tr><td><strong>La rechaza</strong></td><td><span class="pill p-you">Rechazado</span></td><td>Te llega un correo con el comentario del rechazo. Corregís los gastos y la volvés a presentar (guía <a href="#colaborador/corregir-rechazo">Corregir una liquidación rechazada</a>).</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:8px;font-size:13px;color:var(--muted)">Administración también puede rechazarla (<em>Rechazado ADMIN</em>). En ese caso el procedimiento es el mismo: corregís y volvés a presentar.</p>
+
+  <h2><span class="bar"></span>Si algo no sale como esperabas</h2>
+  <table class="trouble">
+    <thead><tr><th>Lo que pasa</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>Completados no coincide con Totales.</td><td>Hay gastos sin completar. Si presentás así, esos gastos no se liquidan. Para incluirlos, buscalos en la pestaña <strong>Gastos</strong> (están en <em>Pendiente de información</em>), completalos y volvé a apretar la calculadora.</td></tr>
+      <tr><td>Los contadores o los importes no reflejan los últimos cambios.</td><td>Se actualizan solo con la <strong>calculadora</strong>. Apretala de nuevo.</td></tr>
+      <tr><td>Elegí Presentada pero sigue diciendo En preparación.</td><td>Falta guardar: apretá el botón verde del disquete (paso 5).</td></tr>
+      <tr><td>Presenté y me di cuenta de un error en un gasto.</td><td>Ya no se puede editar. Avisale a tu aprobador: si la rechaza con un comentario, la liquidación vuelve a vos para corregirla.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="next">
+    <div class="icon calc" style="width:46px;height:46px;background:rgba(255,255,255,.15)"><svg width="20" height="22" viewBox="0 0 20 22"><rect x="2" y="1.5" width="16" height="19" rx="2.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="5" y="4.5" width="10" height="4" rx="1" fill="#fff"/><circle cx="6.5" cy="12.5" r="1.1" fill="#fff"/><circle cx="10" cy="12.5" r="1.1" fill="#fff"/><circle cx="13.5" cy="12.5" r="1.1" fill="#fff"/><circle cx="6.5" cy="16.5" r="1.1" fill="#fff"/><circle cx="10" cy="16.5" r="1.1" fill="#fff"/><circle cx="13.5" cy="16.5" r="1.1" fill="#fff"/></svg></div>
+    <div>
+      <h3>Resumen</h3>
+      <p>Completá los gastos → <strong>calculadora</strong> → revisá Completados vs. Totales → estado <strong>Presentada</strong> → <strong>guardar</strong>. Solo se liquidan los gastos en Completado.</p>
+    </div>
+  </div>
+  <div class="draft">Versión 1 · Noviembre 2026 · Capturas del ambiente de prueba</div>
+</article>
+
+<!-- ===================================================== COLABORADOR · CORREGIR UNA LIQUIDACIÓN RECHAZADA -->
+<article data-guia="colaborador/corregir-rechazo">
+  <div class="hero">
+    <div class="eyebrow">Megalabs · Oficina Corporativa · GGC</div>
+    <h1>Corregir una liquidación rechazada</h1>
+    <div class="sub">Qué hacer cuando tu aprobador o Administración rechazan tu liquidación: reabrir los gastos, corregirlos y volver a presentarla.</div>
+    <div class="chips">
+      <span class="chip">Perfil: Colaborador</span>
+      <span class="chip">≈ 3 minutos</span>
+      <span class="chip">Rechazo del aprobador o de Administración</span>
+    </div>
+  </div>
+  <div class="guide-actions"></div>
+
+  <h2><span class="bar"></span>¿Cuándo pasa?</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Rechazo del aprobador</h3>
+      <p>La liquidación queda en <strong>Rechazado</strong> y te llega un correo con el <strong>motivo del rechazo</strong>, que explica qué corregir.</p>
+    </div>
+    <div class="card">
+      <h3>Rechazo de Administración</h3>
+      <p>La liquidación queda en <strong>Rechazado ADMIN</strong>. El correo con el motivo les llega a vos y a tu aprobador. <strong>Se corrige igual.</strong></p>
+    </div>
+  </div>
+  <div class="note warn"><b>Recordá:</b><span>la liquidación se rechaza <strong>entera</strong>, aunque el problema esté en un solo gasto. El motivo te dice cuál o cuáles corregir.</span></div>
+
+  <h2><span class="bar"></span>El recorrido</h2>
+  <div class="flow">
+    <div class="state s1"><div class="tag">Liquidación</div><div class="name">Rechazado</div><div class="desc">O Rechazado ADMIN. Vuelve a vos con el motivo.</div></div>
+    <div class="arrow"><span class="you">Vos</span><svg width="54" height="14" viewBox="0 0 54 14"><path d="M2 7h46" stroke="#0F7B6C" stroke-width="2"/><path d="M44 2l7 5-7 5" fill="none" stroke="#0F7B6C" stroke-width="2"/></svg>reabrís y corregís los gastos</div>
+    <div class="state s2"><div class="tag">Gastos corregidos</div><div class="name">Completado</div><div class="desc">Cada gasto corregido vuelve a pasar por el tick.</div></div>
+    <div class="arrow"><span class="you">Vos</span><svg width="54" height="14" viewBox="0 0 54 14"><path d="M2 7h46" stroke="#0F7B6C" stroke-width="2"/><path d="M44 2l7 5-7 5" fill="none" stroke="#0F7B6C" stroke-width="2"/></svg>calculadora y Presentada</div>
+    <div class="state s3"><div class="tag">Liquidación</div><div class="name">Presentada</div><div class="desc">Vuelve a tu aprobador para revisarla.</div></div>
+  </div>
+
+  <h2><span class="bar"></span>Paso a paso</h2>
+  <div class="note tip" style="margin-bottom:6px"><b>Ejemplo de esta guía:</b><span>el aprobador rechazó la liquidación 29 pidiendo <strong>eliminar el gasto 237</strong> y <strong>cambiar el canal del gasto 236</strong>.</span></div>
+  <div class="steps">
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">1</span>Leé el motivo del rechazo</h3>
+        <p>Te llega un correo <em>“Liquidación rechazada – N.º – Requiere corrección”</em>. En <strong>Motivo del rechazo</strong> está lo que tenés que corregir y en qué gastos.</p>
+        <p>Hacé clic en <strong>INGRESA AQUÍ</strong>: la liquidación se abre en estado <strong>Rechazado</strong> (o <strong>Rechazado ADMIN</strong>).</p>
+        <div class="note tip"><b>Tip:</b><span>si el motivo no queda claro, consultá a quien la rechazó antes de corregir.</span></div>
+      </div>
+      <div class="figs">
+        <figure class="shot" data-img="PC15-01" data-what="Correo de rechazo: el motivo dice qué corregir"></figure>
+        <figure class="shot" data-img="PC15-02" data-what="La liquidación queda en Rechazado"></figure>
+      </div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">2</span>Ubicá los gastos en la pestaña Gastos</h3>
+        <p>Entrá a la pestaña <strong>Gastos</strong> de la liquidación y buscá los gastos que menciona el motivo por su <strong>idGasto</strong>. Al final de cada fila tenés:</p>
+        <ul>
+          <li>el <strong>lápiz</strong>, para abrir el gasto y corregirlo;</li>
+          <li>la <strong>papelera</strong>, para eliminarlo.</li>
+        </ul>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC15-05" data-what="Lápiz para abrir el gasto y papelera para eliminarlo"></figure></div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">3</span>Eliminá los gastos que no corresponden</h3>
+        <p>Si el motivo pide eliminar un gasto, apretá la <strong>papelera</strong> de su fila. También podés hacerlo con el botón rojo de la papelera dentro del gasto, al lado del selector de estado.</p>
+        <p>En el ejemplo, se elimina el gasto <strong>237</strong>.</p>
+        <div class="note warn"><b>Ojo:</b><span>eliminá solo lo que te pidieron. Un gasto eliminado deja de formar parte de la liquidación.</span></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">4</span>Reabrí el gasto que tenés que corregir</h3>
+        <p>Abrí el gasto con el lápiz. Va a estar en <strong>Completado</strong>, y en ese estado no se puede editar.</p>
+        <p>En el <strong>selector de estado</strong>, arriba a la derecha, elegí <strong>Pendiente de información</strong> y apretá el botón verde de <strong>guardar</strong>. Ahora el gasto se puede editar.</p>
+        <div class="note tip"><b>Solo los que corresponden:</b><span>reabrí únicamente los gastos que tenés que corregir. Los demás quedan en Completado.</span></div>
+      </div>
+      <div class="figs">
+        <figure class="shot" data-img="PC15-03" data-what="El gasto está en Completado"></figure>
+        <figure class="shot" data-img="PC15-04" data-what="Elegí Pendiente de información y guardá"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">5</span>Corregí lo que te pidieron</h3>
+        <p>Cambiá el dato que indica el motivo: el concepto, el canal, la cuenta contable, el comprobante o, si sos de Marketing, las áreas terapéuticas o el proyecto.</p>
+        <p>En el ejemplo, en el gasto <strong>236</strong> se abre el campo <strong>Canal</strong> y se elige la empresa que pidió el aprobador.</p>
+      </div>
+      <div class="figs">
+        <figure class="shot" data-img="PC15-07" data-what="Lista de canales desplegada"></figure>
+        <figure class="shot" data-img="PC15-08" data-what="Canal corregido"></figure>
+      </div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">6</span>Apretá el tick</h3>
+        <p>En la barra de acciones del gasto, apretá el <span class="kbd"><svg width="11" height="11" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0F7B6C" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg> tick</span>. Aparece <strong>“Guardado correctamente”</strong> y el gasto vuelve a <strong>Completado</strong>.</p>
+        <p>Repetí los pasos 4 a 6 con <strong>cada gasto</strong> que tengas que corregir.</p>
+        <div class="note warn"><b>Importante:</b><span>un gasto que dejes en <em>Pendiente de información</em> <strong>no se liquida</strong>.</span></div>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC15-09" data-what="Tick apretado y gasto otra vez en Completado"></figure></div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">7</span>Volvé a presentar la liquidación</h3>
+        <p>Volvé a la liquidación, pestaña <strong>Detalle</strong>:</p>
+        <ul>
+          <li>Apretá la <span class="kbd"><svg width="10" height="11" viewBox="0 0 20 22"><rect x="2" y="1.5" width="16" height="19" rx="2.5" fill="none" stroke="#2E5A8C" stroke-width="2.4"/><rect x="5" y="4.5" width="10" height="4" rx="1" fill="#2E5A8C"/><circle cx="6.5" cy="13" r="1.4" fill="#2E5A8C"/><circle cx="13.5" cy="13" r="1.4" fill="#2E5A8C"/><circle cx="6.5" cy="17" r="1.4" fill="#2E5A8C"/><circle cx="13.5" cy="17" r="1.4" fill="#2E5A8C"/></svg> calculadora</span> para actualizar importes y contadores.</li>
+          <li>En el selector de estado, elegí <strong>Presentada</strong> y apretá <strong>guardar</strong>.</li>
+        </ul>
+        <p>La liquidación vuelve a tu aprobador, que recibe un correo para revisarla.</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC15-10" data-what="Elegí Presentada y apretá guardar"></figure></div>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>Si algo no sale como esperabas</h2>
+  <table class="trouble">
+    <thead><tr><th>Lo que pasa</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>No puedo modificar el gasto.</td><td>Está en <strong>Completado</strong>. Volvelo a <em>Pendiente de información</em> con el selector de estado y guardá (paso 4).</td></tr>
+      <tr><td>Corregí los gastos pero la liquidación sigue en Rechazado.</td><td>Falta volver a presentarla: calculadora, <strong>Presentada</strong> y guardar (paso 7).</td></tr>
+      <tr><td>Reabrí un gasto que no tenía que corregir.</td><td>Apretá el <strong>tick</strong> para que vuelva a Completado.</td></tr>
+      <tr><td>El tick no deja pasar el gasto a Completado.</td><td>Falta algún dato. El aviso naranja dice cuáles. Completalos y volvé a apretar el tick.</td></tr>
+      <tr><td>No entiendo qué tengo que corregir.</td><td>Consultá a quien la rechazó: tu aprobador o Administración.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="next">
+    <div class="icon tick" style="width:46px;height:46px;background:rgba(255,255,255,.15)"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div>
+      <h3>Resumen</h3>
+      <p>Leé el motivo → eliminá lo que no corresponde → gasto a <strong>Pendiente de información</strong> + guardar → corregí → <strong>tick</strong> → en la liquidación: <strong>calculadora</strong>, <strong>Presentada</strong> y guardar.</p>
+    </div>
+  </div>
+  <div class="draft">Versión 1 · Noviembre 2026 · Capturas del ambiente de prueba</div>
+</article>
+
+<!-- ===================================================== COLABORADOR · CREAR UNA LIQUIDACIÓN DE REEMBOLSO -->
+<article data-guia="colaborador/crear-reembolso">
+  <div class="hero">
+    <div class="eyebrow">Megalabs · Oficina Corporativa · GGC</div>
+    <h1>Crear una liquidación de reembolso</h1>
+    <div class="sub">Cómo rendir los gastos que pagaste con tu dinero (efectivo, transferencia u otro medio): crear la liquidación y cargarle los gastos.</div>
+    <div class="chips">
+      <span class="chip">Perfil: Colaborador</span>
+      <span class="chip">≈ 5 minutos</span>
+      <span class="chip">Gastos que no son de tarjeta corporativa</span>
+    </div>
+  </div>
+  <div class="guide-actions"></div>
+
+  <h2><span class="bar"></span>Antes de empezar</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>¿Cuándo se usa?</h3>
+      <p>Cuando pagaste un gasto de la empresa <strong>con tu dinero</strong> y te lo tienen que devolver. A diferencia de la tarjeta corporativa, esta liquidación <strong>la creás vos</strong>: GGC no la genera sola.</p>
+    </div>
+    <div class="card">
+      <h3>Tené a mano</h3>
+      <p>Los <strong>comprobantes</strong> (foto o PDF) de cada gasto, y para cada uno: fecha, importe, moneda (pesos o dólares), comercio, canal y cuenta contable.</p>
+    </div>
+  </div>
+  <div class="note warn"><b>Importante:</b><span>los gastos de <strong>tarjeta corporativa</strong> y los de <strong>reembolso</strong> van siempre en liquidaciones distintas. No cargues un gasto de tarjeta en una liquidación de reembolso.</span></div>
+
+  <h2><span class="bar"></span>El recorrido</h2>
+  <div class="flow">
+    <div class="state s1"><div class="tag">Paso 1</div><div class="name">Creás la liquidación</div><div class="desc">Tipo Reembolso y período. Queda En preparación.</div></div>
+    <div class="arrow"><span class="you">Vos</span><svg width="54" height="14" viewBox="0 0 54 14"><path d="M2 7h46" stroke="#0F7B6C" stroke-width="2"/><path d="M44 2l7 5-7 5" fill="none" stroke="#0F7B6C" stroke-width="2"/></svg>cargás los gastos</div>
+    <div class="state s2"><div class="tag">Paso 2</div><div class="name">Gastos en Completado</div><div class="desc">Cada gasto con sus datos, comprobante y tick.</div></div>
+    <div class="arrow"><span class="you">Vos</span><svg width="54" height="14" viewBox="0 0 54 14"><path d="M2 7h46" stroke="#0F7B6C" stroke-width="2"/><path d="M44 2l7 5-7 5" fill="none" stroke="#0F7B6C" stroke-width="2"/></svg>la presentás</div>
+    <div class="state s3"><div class="tag">Paso 3</div><div class="name">Presentada</div><div class="desc">Pasa a tu aprobador, igual que una de tarjeta.</div></div>
+  </div>
+
+  <h2><span class="bar"></span>Parte 1 · Crear la liquidación</h2>
+  <div class="steps">
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">1</span>Creá una liquidación nueva</h3>
+        <p>Entrá a la búsqueda de <strong>Liquidaciones</strong> y apretá el botón verde <strong>+</strong>, arriba a la derecha.</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC09-01" data-what="Búsqueda de Liquidaciones y botón + para crear"></figure></div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">2</span>Completá los datos de la liquidación</h3>
+        <ul>
+          <li><strong>Colaborador (*):</strong> ya viene cargado con tu usuario.</li>
+          <li><strong>Tipo de liquidación (*):</strong> elegí <strong>Reembolso</strong>.</li>
+          <li><strong>Período desde / hasta (*):</strong> el rango de fechas de los gastos que vas a rendir.</li>
+        </ul>
+        <p>El <strong>Aprobador</strong> se completa solo desde tu ficha. Los importes y contadores los calcula después la calculadora: no los completes. El estado arranca en <strong>En preparación</strong>.</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC09-02" data-what="Colaborador, Tipo Reembolso, Período y botón guardar"></figure></div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">3</span>Guardá</h3>
+        <p>Apretá el botón verde de <strong>guardar</strong>. La liquidación queda creada en <strong>En preparación</strong>, con su número en la pestaña de arriba (en el ejemplo, la <strong>30</strong>). Todavía no tiene gastos.</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC09-04" data-what="La liquidación guardada toma su número"></figure></div>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>Parte 2 · Cargar los gastos</h2>
+  <div class="steps">
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">4</span>Agregá un gasto desde la pestaña Gastos</h3>
+        <p>En la liquidación, entrá a la pestaña <strong>Gastos</strong> (al principio está vacía) y apretá el botón verde <strong>+</strong>, a la derecha.</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC10-00" data-what="Pestaña Gastos de la liquidación nueva y botón +"></figure></div>
+    </div>
+
+    <div class="step">
+      <div>
+        <h3><span class="num">5</span>Cargá los datos del gasto</h3>
+        <p>A diferencia de los gastos de tarjeta, acá <strong>cargás todo vos</strong>. Los obligatorios para guardar están marcados con <strong>(*)</strong>:</p>
+        <ul>
+          <li><strong>Fecha del gasto (*)</strong>: la del comprobante.</li>
+          <li><strong>Forma de pago (*)</strong>: efectivo, transferencia u otro.</li>
+          <li><strong>Importe (*)</strong> y <strong>Moneda (*)</strong>: pesos (UYU) o dólares (USD).</li>
+          <li><strong>Proveedor/comercio</strong>: dónde hiciste el gasto.</li>
+        </ul>
+        <p>Se completan solos: <strong>Colaborador</strong>, <strong>Aprobador</strong> y <strong>Centro de costo</strong> (desde tu ficha), <strong>Origen</strong> (Merlin) y <strong>Liquidación</strong> (la que tenías abierta).</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC10-01" data-what="Datos del gasto de reembolso; la liquidación viene cargada"></figure></div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">6</span>Completá el gasto y apretá el tick</h3>
+        <p>Igual que en la guía <a href="#colaborador/completar-gasto">Completar un gasto</a>:</p>
+        <ul>
+          <li><strong>Concepto de gasto</strong>, <strong>Canal</strong> y <strong>Cuenta contable</strong>.</li>
+          <li><strong>Comprobante adjunto</strong>: el <strong>+</strong> verde, y arrastrás o abrís el archivo.</li>
+          <li>Si sos de Marketing: <strong>Áreas Terapéuticas</strong> y <strong>Proyecto</strong>.</li>
+        </ul>
+        <p>Después apretá el <span class="kbd"><svg width="11" height="11" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0F7B6C" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg> tick</span>: aparece <strong>“Guardado correctamente”</strong> y el gasto queda en <strong>Completado</strong>.</p>
+      </div>
+      <div class="figs"><figure class="shot" data-img="PC10-03" data-what="Tick apretado y gasto de reembolso en Completado"></figure></div>
+    </div>
+
+    <div class="step wide">
+      <div>
+        <h3><span class="num">7</span>Repetí con cada gasto</h3>
+        <p>Volvé a la liquidación y repetí los pasos 4 a 6 con cada comprobante. Todos los gastos van en la <strong>misma liquidación</strong> mientras estén dentro del período.</p>
+        <p>Cuando termines, presentala como cualquier otra: <strong>calculadora</strong>, estado <strong>Presentada</strong> y guardar (guía <a href="#colaborador/presentar-liquidacion">Presentar una liquidación</a>).</p>
+      </div>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>Si algo no sale como esperabas</h2>
+  <table class="trouble">
+    <thead><tr><th>Lo que pasa</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>No me deja guardar la liquidación.</td><td>Falta algún dato obligatorio (*): colaborador, tipo de liquidación o período hasta.</td></tr>
+      <tr><td>No me deja guardar el gasto.</td><td>Faltan fecha, forma de pago, importe o moneda.</td></tr>
+      <tr><td>Me dice que ya existe un gasto con los mismos datos.</td><td>GGC no permite gastos duplicados. Revisá si ya lo cargaste.</td></tr>
+      <tr><td>El gasto no aparece en la pestaña Gastos de la liquidación.</td><td>Abrilo y revisá el campo <strong>Liquidación</strong>: tiene que tener el número de tu liquidación de reembolso.</td></tr>
+      <tr><td>El tick no deja pasar el gasto a Completado.</td><td>Falta algún dato. El aviso naranja dice cuáles.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="next">
+    <div class="icon calc" style="width:46px;height:46px;background:rgba(255,255,255,.15);font-size:26px;font-weight:700">+</div>
+    <div>
+      <h3>Resumen</h3>
+      <p>Liquidaciones → <strong>+</strong> → tipo <strong>Reembolso</strong> y período → guardar → pestaña Gastos → <strong>+</strong> → datos del gasto, comprobante y <strong>tick</strong> → repetir → presentar.</p>
+    </div>
+  </div>
+  <div class="draft">Versión 1 · Noviembre 2026 · Capturas del ambiente de prueba</div>
+</article>
+
+<!-- ===================================================== COLABORADOR · SEGUIR UNA LIQUIDACIÓN -->
+<article data-guia="colaborador/seguimiento">
+  <div class="hero">
+    <div class="eyebrow">Megalabs · Oficina Corporativa · GGC</div>
+    <h1>Seguir una liquidación hasta el pago</h1>
+    <div class="sub">Dónde ver en qué etapa está tu liquidación y qué correos te van llegando hasta que se paga.</div>
+    <div class="chips">
+      <span class="chip">Perfil: Colaborador</span>
+      <span class="chip">Guía de consulta</span>
+    </div>
+  </div>
+  <div class="guide-actions"></div>
+
+  <h2><span class="bar"></span>Dónde ver el estado</h2>
+  <div class="step wide" style="border-top:none;padding-top:4px">
+    <div>
+      <ul>
+        <li><strong>En la liquidación:</strong> el estado está en el selector de arriba a la derecha. Cada estado trae una descripción corta.</li>
+        <li><strong>En la búsqueda de Liquidaciones:</strong> elegí un valor en el filtro <strong>[Estado]</strong> y apretá la <strong>lupa</strong> para ver todas tus liquidaciones en ese estado.</li>
+      </ul>
+    </div>
+    <div class="figs row" style="grid-template-columns:1.4fr 1fr">
+      <figure class="shot" data-img="PC18-01" data-what="Filtro Estado y lupa en la búsqueda de Liquidaciones"></figure>
+      <figure class="shot" data-img="PC08-05" data-what="Estados de la liquidación con su descripción"></figure>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>Estados de la liquidación</h2>
+  <table>
+    <thead><tr><th>Estado</th><th>Qué significa</th><th>¿Tenés que hacer algo?</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill p-you">En preparación</span></td><td>Creada, con gastos que se están completando.</td><td><strong>Sí:</strong> completá los gastos y presentala (<a href="#colaborador/presentar-liquidacion">Presentar una liquidación</a>).</td></tr>
+      <tr><td><span class="pill p-auto">Presentada</span></td><td>La presentaste; espera a tu aprobador.</td><td>No. Esperá.</td></tr>
+      <tr><td><span class="pill p-card">Aprobado</span></td><td>Tu aprobador la aprobó; pasa a Administración.</td><td>No. Esperá.</td></tr>
+      <tr><td><span class="pill p-you">Rechazado</span></td><td>Tu aprobador la rechazó con un motivo.</td><td><strong>Sí:</strong> corregila y volvé a presentarla (<a href="#colaborador/corregir-rechazo">Corregir una liquidación rechazada</a>).</td></tr>
+      <tr><td><span class="pill p-card">Aprobado ADMIN</span></td><td>Administración la validó; queda pendiente el pago.</td><td>No. Esperá.</td></tr>
+      <tr><td><span class="pill p-you">Rechazado ADMIN</span></td><td>Administración la rechazó con un motivo.</td><td><strong>Sí:</strong> corregila igual que un rechazo del aprobador.</td></tr>
+      <tr><td><span class="pill p-auto">Liquidado</span></td><td>La liquidación está paga.</td><td>No. Terminó el ciclo.</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="bar"></span>Estados de los gastos</h2>
+  <table>
+    <thead><tr><th>Estado</th><th>Qué significa</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill p-you">Pendiente de información</span></td><td>Le falta algún dato o el comprobante. Si queda así al presentar, <strong>no se liquida</strong>.</td></tr>
+      <tr><td><span class="pill p-card">Completado</span></td><td>Tiene todos los datos y pasó el tick.</td></tr>
+      <tr><td><span class="pill p-auto">Liquidado</span></td><td>Se pagó junto con su liquidación.</td></tr>
+      <tr><td><span class="pill p-auto">Registrado AX</span></td><td>Lo usa Administración cuando el gasto se registra en el sistema contable. No tenés que hacer nada.</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="bar"></span>Correos que te llegan</h2>
+  <p>Todos llegan de <strong>Notificaciones GCTI</strong>, firmados por <em>Gestión de Gastos Corporativos – Merlin</em>, y traen un enlace directo a la liquidación.</p>
+  <table>
+    <thead><tr><th>Cuándo</th><th>Qué dice</th><th>Qué hacés</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Se generó tu liquidación de tarjeta</strong><br><span style="color:var(--muted);font-size:12px">“Liquidación de gastos N.º … generada”</span></td><td>Período y cantidad de gastos en pesos y en dólares.</td><td>Completá los gastos (<a href="#colaborador/completar-gasto">Completar un gasto</a>).</td></tr>
+      <tr><td><strong>Te rechazaron la liquidación</strong><br><span style="color:var(--muted);font-size:12px">“Liquidación rechazada – N.º – Requiere corrección”</span></td><td>Quién la rechazó y el <strong>motivo</strong>.</td><td>Corregila y volvé a presentarla.</td></tr>
+      <tr><td><strong>Administración la validó</strong></td><td>Aviso de que la liquidación quedó validada.</td><td>Nada.</td></tr>
+      <tr><td><strong>Se pagó</strong></td><td>Aviso de que la liquidación quedó <strong>Liquidado</strong>.</td><td>Nada. Terminó el ciclo.</td></tr>
+    </tbody>
+  </table>
+  <div class="note tip"><b>Ojo:</b><span>cuando tu <strong>aprobador la aprueba no te llega correo</strong> (el aviso va a Administración). Lo ves porque el estado cambia a <strong>Aprobado</strong>.</span></div>
+
+  <div class="next">
+    <div class="icon calc" style="width:46px;height:46px;background:rgba(255,255,255,.15);font-size:22px">✉</div>
+    <div>
+      <h3>Resumen</h3>
+      <p>Solo tenés que actuar en <strong>En preparación</strong>, <strong>Rechazado</strong> y <strong>Rechazado ADMIN</strong>. En los demás estados, esperá: los correos te avisan cuando hay novedades.</p>
+    </div>
+  </div>
+  <div class="draft">Versión 1 · Noviembre 2026</div>
+</article>
+
+<article data-guia="__soon">
+  <div class="empty">
+    <h1 id="soon-title">Próximamente</h1>
+    <p>Esta guía todavía está en preparación.</p>
+    <p><a href="#inicio">Volver al inicio</a></p>
+  </div>
+</article>
+
+  </main>
+</div>
+
+<script>
+const PERFIL_FIJO = "colaborador";
+/* ---------------- Catálogo de guías ----------------
+   Para publicar una guía nueva: agregar su <article data-guia="..."> arriba
+   y pasar "lista" a true acá. */
+const PERFILES = [
+  { id: "colaborador", nombre: "Colaborador", color: "#0F7B6C",
+    desc: "Completar tus gastos, armar y presentar tus liquidaciones.",
+    guias: [
+      { slug: "completar-gasto",        titulo: "Completar un gasto",                    lista: true  },
+      { slug: "presentar-liquidacion",  titulo: "Presentar una liquidación",             lista: true  },
+      { slug: "crear-reembolso",        titulo: "Crear una liquidación de reembolso",    lista: true  },
+      { slug: "corregir-rechazo",       titulo: "Corregir una liquidación rechazada",    lista: true  },
+      { slug: "seguimiento",            titulo: "Seguir una liquidación hasta el pago",  lista: true  },
+    ]},
+  { id: "aprobador", nombre: "Aprobador", color: "#2E5A8C",
+    desc: "Revisar y aprobar o rechazar las liquidaciones de tu equipo.",
+    guias: [
+      { slug: "aprobar-rechazar",       titulo: "Aprobar o rechazar una liquidación",    lista: false },
+    ]},
+  { id: "administracion", nombre: "Administración", color: "#A15C07",
+    desc: "Validar liquidaciones, registrar pagos y configurar colaboradores.",
+    guias: [
+      { slug: "validar",                titulo: "Validar una liquidación",               lista: false },
+      { slug: "registrar-pago",         titulo: "Registrar el pago (Liquidado)",         lista: false },
+      { slug: "configurar-colaborador", titulo: "Configurar un colaborador",             lista: false },
+    ]},
+];
+
+const params = new URLSearchParams(location.search);
+const MODE_EMBED = params.has("embed");
+const MODE_SOLO  = params.has("solo");
+const MODE_PRINT = params.has("print");
+if (MODE_EMBED) document.body.classList.add("embed");
+if (MODE_SOLO)  document.body.classList.add("solo");
+if (MODE_PRINT) document.body.classList.add("print");
+
+/* Perfil fijo: lo define el archivo de cada perfil (colaborador.html, aprobador.html, administracion.html)
+   o el parámetro ?perfil=. Con perfil fijo solo se muestran las guías de ese perfil. */
+const PERFIL = (typeof PERFIL_FIJO !== "undefined" && PERFIL_FIJO) || params.get("perfil");
+const VISIBLES = PERFIL ? PERFILES.filter(p => p.id === PERFIL) : PERFILES;
+
+/* Capturas: <figure class="shot" data-img="PC04-03"> busca img/PC04-03.png;
+   si no existe, muestra un recuadro con el código de la captura. */
+document.querySelectorAll("figure.shot").forEach(f => {
+  const code = f.dataset.img, what = f.dataset.what || "";
+  const ph = () => {
+    f.classList.remove("has-img");
+    f.innerHTML = `<div class="ph">📷<div class="code">CAPTURA ${code}</div><div class="what">${what}</div></div>`;
+  };
+  const img = new Image();
+  img.alt = what;
+  img.onload = () => { f.classList.add("has-img"); f.innerHTML = ""; f.appendChild(img);
+    const c = document.createElement("figcaption"); c.textContent = what; f.appendChild(c); };
+  img.onerror = ph;
+  ph();
+  img.src = `img/${code}.png`;
+});
+
+/* Menú lateral e inicio */
+function buildMenu(filter = "") {
+  const q = filter.trim().toLowerCase();
+  const menu = document.getElementById("menu");
+  menu.innerHTML = `<a class="item" href="#inicio" data-k="inicio">Inicio</a>`;
+  VISIBLES.forEach(p => {
+    const gs = p.guias.filter(g => !q || g.titulo.toLowerCase().includes(q));
+    if (!gs.length) return;
+    menu.insertAdjacentHTML("beforeend", `<div class="group"><span class="dot" style="background:${p.color}"></span>${p.nombre}</div>`);
+    gs.forEach(g => menu.insertAdjacentHTML("beforeend",
+      `<a class="item ${g.lista ? "" : "soon"}" href="#${p.id}/${g.slug}" data-k="${p.id}/${g.slug}">${g.titulo}${g.lista ? "" : '<span class="badge">Pronto</span>'}</a>`));
+  });
+  markActive();
+}
+function buildHome() {
+  if (PERFIL && VISIBLES.length) {
+    document.getElementById("home-title").textContent = `Guías de GGC · ${VISIBLES[0].nombre}`;
+    document.getElementById("home-sub").textContent = VISIBLES[0].desc + " Elegí una guía para ver el paso a paso.";
+    document.getElementById("home-h2").lastChild.textContent = "Tus guías";
+    document.getElementById("home-grid").style.gridTemplateColumns = "1fr";
+  }
+  document.getElementById("home-grid").innerHTML = VISIBLES.map(p => `
+    <div class="home-card">
+      <h3><span class="dot" style="background:${p.color}"></span>${p.nombre}</h3>
+      <p>${p.desc}</p>
+      <ul>${p.guias.map(g => g.lista
+        ? `<li><a href="#${p.id}/${g.slug}">${g.titulo}</a></li>`
+        : `<li><span class="soon">${g.titulo} · pronto</span></li>`).join("")}</ul>
+    </div>`).join("");
+}
+function findGuide(key) {
+  for (const p of VISIBLES) for (const g of p.guias) if (`${p.id}/${g.slug}` === key) return { p, g };
+  return null;
+}
+function markActive() {
+  const key = location.hash.slice(1) || "inicio";
+  document.querySelectorAll("nav.side a.item").forEach(a => a.classList.toggle("active", a.dataset.k === key));
+}
+function route() {
+  const key = decodeURIComponent(location.hash.slice(1)) || "inicio";
+  if (PERFIL && key !== "inicio" && !key.startsWith(PERFIL + "/")) { location.hash = "inicio"; return; }
+  document.querySelectorAll("article").forEach(a => a.classList.remove("show"));
+  let art = document.querySelector(`article[data-guia="${key}"]`);
+  if (!art) {
+    const info = findGuide(key);
+    document.getElementById("soon-title").textContent = info ? info.g.titulo : "Guía no encontrada";
+    art = document.querySelector('article[data-guia="__soon"]');
+  } else if (key !== "inicio") {
+    const slugFile = key.replace("/", "-");
+    const self = location.href.split("#")[0].split("?")[0];
+    art.querySelector(".guide-actions").innerHTML =
+      `<a href="pdf/GGC-${slugFile}.pdf" target="_blank" rel="noopener">⬇ Descargar PDF</a>` +
+      `<a href="${self}?solo#${key}" target="_blank" rel="noopener">↗ Abrir solo esta guía</a>`;
+    const info = findGuide(key);
+    if (info) document.title = `GGC · ${info.g.titulo}`;
+  }
+  art.classList.add("show");
+  document.body.classList.remove("nav-open");
+  markActive();
+  if (!MODE_PRINT) window.scrollTo(0, 0);
+}
+document.getElementById("search").addEventListener("input", e => buildMenu(e.target.value));
+window.addEventListener("hashchange", route);
+buildMenu(); buildHome(); route();
+</script>
+</body>
+</html>
